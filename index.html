@@ -1,8 +1,7 @@
 <!--
-  MainCrafts landing page — Full Stack Internship, Task 1
-  Went with a "blueprint / workshop" idea since the brand is called MainCrafts.
-  Single file for now, will split into partials if this grows.
-  TODO: swap sticky-note placeholder image for something less silly before final submit? keeping it for now, kinda like it.
+  MainCrafts — Home (Task 2)
+  Split the single Task 1 page into Home/About/Contact + pulled CSS/JS into
+  shared files so I'm not maintaining three copies of the same stylesheet.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -13,574 +12,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style>
-  :root{
-    --ink:#12172B;
-    --ink-2:#1B2340;
-    --paper:#F6F3EC;
-    --paper-dim:#EDE8DB;
-    --amber:#F2A93C;
-    --amber-dim:#C7842A;
-    --slate:#5B6178;
-    --line: rgba(246,243,236,0.16);
-    --line-dark: rgba(18,23,43,0.14);
-    --radius: 4px;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    font-family:'Inter',sans-serif;
-    background:var(--paper);
-    color:var(--ink);
-    line-height:1.6;
-    overflow-x:hidden;
-  }
-  a{text-decoration:none;color:inherit;}
-  ul{list-style:none;}
-  img{max-width:100%;display:block;}
-  .eyebrow{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.72rem;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:var(--amber-dim);
-  }
-  .eyebrow::before{content:"// ";color:var(--amber);}
-  .handnote{
-    font-family:'Caveat',cursive;
-    font-weight:600;
-    color:var(--amber);
-    font-size:1.35rem;
-    line-height:1.2;
-    display:inline-block;
-  }
-
-  /* ===== HEADER ===== */
-  header{
-    position:fixed;
-    top:0; left:0; right:0;
-    z-index:100;
-    background:rgba(18,23,43,0.92);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
-  }
-  .nav-wrap{
-    max-width:1200px;
-    margin:0 auto;
-    padding:0 24px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    height:72px;
-  }
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-family:'Space Grotesk',sans-serif;
-    font-weight:700;
-    font-size:1.25rem;
-    color:var(--paper);
-  }
-  .brand .mark{
-    width:34px;height:34px;
-    border:1.5px solid var(--amber);
-    border-radius:4px;
-    display:flex;align-items:center;justify-content:center;
-    color:var(--amber);
-    font-size:0.9rem;
-    transform:rotate(0deg);
-    position:relative;
-  }
-  .brand .mark::after{
-    content:"";
-    position:absolute;
-    inset:-6px;
-    border:1px dashed var(--line);
-    border-radius:8px;
-  }
-  nav.primary-nav > ul{
-    display:flex;
-    gap:36px;
-    align-items:center;
-  }
-  nav.primary-nav a{
-    font-size:0.92rem;
-    font-weight:500;
-    color:var(--paper);
-    opacity:0.82;
-    transition:opacity .2s ease, color .2s ease;
-    position:relative;
-    padding:6px 0;
-  }
-  nav.primary-nav > ul > li > a:hover{opacity:1;color:var(--amber);}
-
-  .has-dropdown{position:relative;}
-  .has-dropdown > a::after{
-    content:"\f078";
-    font-family:"Font Awesome 6 Free";
-    font-weight:900;
-    font-size:0.6rem;
-    margin-left:6px;
-    vertical-align:middle;
-    opacity:0.7;
-  }
-  .dropdown{
-    position:absolute;
-    top:calc(100% + 14px);
-    left:50%;
-    transform:translateX(-50%) translateY(6px);
-    min-width:220px;
-    background:var(--ink-2);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:8px;
-    opacity:0;
-    visibility:hidden;
-    transition:opacity .2s ease, transform .2s ease, visibility .2s;
-    box-shadow:0 18px 40px rgba(0,0,0,0.35);
-  }
-  .has-dropdown:hover .dropdown,
-  .has-dropdown:focus-within .dropdown{
-    opacity:1;
-    visibility:visible;
-    transform:translateX(-50%) translateY(0);
-  }
-  .dropdown li a{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:10px 12px;
-    font-size:0.86rem;
-    border-radius:3px;
-    opacity:0.85;
-  }
-  .dropdown li a i{color:var(--amber);width:16px;text-align:center;font-size:0.8rem;}
-  .dropdown li a:hover{background:rgba(242,169,60,0.1);opacity:1;}
-
-  .cta-nav{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.78rem;
-    padding:10px 18px;
-    border:1px solid var(--amber);
-    color:var(--amber) !important;
-    border-radius:3px;
-    opacity:1 !important;
-    transition:background .2s ease, color .2s ease;
-  }
-  .cta-nav:hover{background:var(--amber);color:var(--ink) !important;}
-
-  .burger{
-    display:none;
-    flex-direction:column;
-    gap:5px;
-    background:none;border:none;cursor:pointer;
-    padding:8px;
-  }
-  .burger span{width:22px;height:2px;background:var(--paper);}
-
-  /* ===== HERO ===== */
-  .hero{
-    position:relative;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    background:
-      linear-gradient(180deg, rgba(18,23,43,0.88) 0%, rgba(18,23,43,0.97) 100%),
-      radial-gradient(ellipse at 75% 20%, rgba(242,169,60,0.18), transparent 55%),
-      var(--ink);
-    color:var(--paper);
-    padding:140px 24px 90px;
-    overflow:hidden;
-  }
-  .blueprint-grid{
-    position:absolute; inset:0;
-    background-image:
-      linear-gradient(var(--line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size:44px 44px;
-    -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0.5), transparent 75%);
-            mask-image:linear-gradient(180deg, rgba(0,0,0,0.5), transparent 75%);
-    opacity:0.5;
-  }
-  .hero-inner{
-    max-width:1200px;
-    margin:0 auto;
-    width:100%;
-    position:relative;
-    display:grid;
-    grid-template-columns:1.15fr 0.85fr;
-    gap:60px;
-    align-items:center;
-  }
-  .draft-stamp{
-    position:absolute;
-    top:-70px; right:24px;
-    width:118px;height:118px;
-    border:2px solid rgba(242,169,60,0.55);
-    border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    transform:rotate(-14deg);
-    font-family:'JetBrains Mono',monospace;
-    color:var(--amber);
-    font-size:0.68rem;
-    letter-spacing:0.08em;
-    text-align:center;
-    line-height:1.5;
-  }
-  h1{
-    font-family:'Space Grotesk',sans-serif;
-    font-size:clamp(2.4rem, 5vw, 3.9rem);
-    font-weight:700;
-    line-height:1.08;
-    margin:18px 0 22px;
-    letter-spacing:-0.01em;
-  }
-  h1 .accent{color:var(--amber);}
-  .scribble-wrap{position:relative;display:inline-block;}
-  .scribble-wrap .scribble{
-    position:absolute;
-    left:-2px; bottom:-10px;
-    width:100%;
-    height:14px;
-  }
-  .hero-sub{
-    font-size:1.08rem;
-    color:rgba(246,243,236,0.72);
-    max-width:520px;
-    margin-bottom:34px;
-  }
-  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
-  .btn-primary{
-    font-family:'Space Grotesk',sans-serif;
-    font-weight:600;
-    background:linear-gradient(135deg, var(--amber), #d98a2a);
-    color:var(--ink);
-    padding:15px 30px;
-    border-radius:4px;
-    font-size:0.98rem;
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    box-shadow:0 12px 30px rgba(242,169,60,0.25);
-    transition:transform .2s ease, box-shadow .2s ease;
-  }
-  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(242,169,60,0.38);}
-  .btn-ghost{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.85rem;
-    color:var(--paper);
-    opacity:0.75;
-    border-bottom:1px dashed var(--line);
-    padding-bottom:3px;
-    transition:opacity .2s ease;
-  }
-  .btn-ghost:hover{opacity:1;}
-
-  .hero-panel{
-    position:relative;
-    border:1px solid var(--line);
-    border-radius:6px;
-    padding:26px;
-    background:rgba(246,243,236,0.03);
-  }
-  .hero-panel::before{
-    content:"";
-    position:absolute; top:-1px;left:-1px;
-    width:16px;height:16px;
-    border-top:2px solid var(--amber);
-    border-left:2px solid var(--amber);
-  }
-  .hero-panel::after{
-    content:"";
-    position:absolute; bottom:-1px;right:-1px;
-    width:16px;height:16px;
-    border-bottom:2px solid var(--amber);
-    border-right:2px solid var(--amber);
-  }
-  .panel-row{
-    display:flex;
-    justify-content:space-between;
-    padding:12px 0;
-    border-bottom:1px solid var(--line);
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.82rem;
-  }
-  .panel-row:last-child{border-bottom:none;}
-  .panel-row span:first-child{color:rgba(246,243,236,0.55);}
-  .panel-row span:last-child{color:var(--amber);}
-  .sticky-note{
-    position:absolute;
-    top:-22px; left:-18px;
-    background:#f4e4a8;
-    color:#4a3f1a;
-    font-family:'Caveat',cursive;
-    font-weight:600;
-    font-size:1.05rem;
-    line-height:1.15;
-    padding:10px 14px 12px;
-    transform:rotate(-6deg);
-    box-shadow:0 8px 16px rgba(0,0,0,0.25);
-    z-index:2;
-  }
-  .sticky-note::before{
-    content:"";
-    position:absolute;
-    top:-8px; left:50%;
-    transform:translateX(-50%) rotate(2deg);
-    width:36px; height:14px;
-    background:rgba(255,255,255,0.35);
-    border:1px solid rgba(255,255,255,0.4);
-  }
-
-  /* ===== SECTION SHARED ===== */
-  section{padding:100px 24px;}
-  .section-inner{max-width:1200px;margin:0 auto;}
-  .section-head{max-width:620px;margin-bottom:56px;}
-  .section-head h2{
-    font-family:'Space Grotesk',sans-serif;
-    font-size:clamp(1.8rem, 3vw, 2.5rem);
-    margin-top:12px;
-    letter-spacing:-0.01em;
-  }
-  .section-head p{color:var(--slate);margin-top:14px;font-size:1.02rem;}
-
-  /* ===== FEATURES ===== */
-  .features{background:var(--paper);}
-  .feature-grid{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:22px;
-  }
-  .feature-card{
-    background:#fff;
-    border:1px solid var(--line-dark);
-    border-radius:6px;
-    padding:30px 24px;
-    position:relative;
-    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-  }
-  .feature-card::before{
-    content:"";
-    position:absolute; top:-1px;left:-1px;
-    width:14px;height:14px;
-    border-top:2px solid transparent;
-    border-left:2px solid transparent;
-    transition:border-color .25s ease;
-  }
-  .feature-card:hover{
-    transform:translateY(-6px) rotate(-0.6deg);
-    box-shadow:0 18px 40px rgba(18,23,43,0.1);
-    border-color:transparent;
-  }
-  .feature-card:nth-child(2):hover{transform:translateY(-7px) rotate(0.5deg);}
-  .feature-card:nth-child(3):hover{transform:translateY(-5px) rotate(0.8deg);}
-  .feature-card:nth-child(4):hover{transform:translateY(-6px) rotate(-0.4deg);}
-  .feature-card:nth-child(2){margin-top:14px;}
-  .feature-card:nth-child(4){margin-top:-10px;}
-  .feature-card:hover::before{
-    border-top:2px solid var(--amber);
-    border-left:2px solid var(--amber);
-  }
-  .feature-icon{
-    width:48px;height:48px;
-    border-radius:8px;
-    background:linear-gradient(135deg, var(--ink), var(--ink-2));
-    display:flex;align-items:center;justify-content:center;
-    color:var(--amber);
-    font-size:1.15rem;
-    margin-bottom:20px;
-  }
-  .feature-card h3{
-    font-family:'Space Grotesk',sans-serif;
-    font-size:1.12rem;
-    margin-bottom:10px;
-  }
-  .feature-card p{color:var(--slate);font-size:0.92rem;}
-  .feature-tag{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.68rem;
-    color:var(--amber-dim);
-    letter-spacing:0.06em;
-    margin-top:16px;
-    display:block;
-  }
-
-  /* ===== SERVICES ===== */
-  .services{
-    background:var(--ink);
-    color:var(--paper);
-    position:relative;
-  }
-  .services .section-head p{color:rgba(246,243,236,0.62);}
-  .service-list{
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:1px;
-    background:var(--line);
-    border:1px solid var(--line);
-    border-radius:6px;
-    overflow:hidden;
-  }
-  .service-item{
-    background:var(--ink);
-    padding:34px 28px;
-    transition:background .25s ease;
-  }
-  .service-item:hover{background:var(--ink-2);}
-  .service-item i{color:var(--amber);font-size:1.3rem;margin-bottom:16px;}
-  .service-item h4{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin-bottom:8px;}
-  .service-item p{font-size:0.88rem;color:rgba(246,243,236,0.6);}
-
-  /* ===== CTA STRIP ===== */
-  .cta-strip{
-    background:linear-gradient(120deg, var(--amber), #d98a2a);
-    color:var(--ink);
-    text-align:center;
-    padding:80px 24px;
-  }
-  .cta-strip h2{
-    font-family:'Space Grotesk',sans-serif;
-    font-size:clamp(1.6rem,3.4vw,2.4rem);
-    margin-bottom:16px;
-  }
-  .cta-strip p{margin-bottom:30px;opacity:0.85;}
-  .btn-dark{
-    background:var(--ink);
-    color:var(--paper);
-    font-family:'Space Grotesk',sans-serif;
-    font-weight:600;
-    padding:15px 34px;
-    border-radius:4px;
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    transition:transform .2s ease;
-  }
-  .btn-dark:hover{transform:translateY(-3px);}
-
-  /* ===== FOOTER ===== */
-  footer{
-    background:var(--ink-2);
-    color:rgba(246,243,236,0.7);
-    padding:64px 24px 28px;
-  }
-  .footer-inner{
-    max-width:1200px;margin:0 auto;
-    display:grid;
-    grid-template-columns:1.4fr 1fr 1fr 1fr;
-    gap:40px;
-    padding-bottom:40px;
-    border-bottom:1px solid var(--line);
-  }
-  .footer-brand .brand{color:var(--paper);margin-bottom:14px;}
-  .footer-brand p{font-size:0.88rem;max-width:280px;color:rgba(246,243,236,0.55);}
-  .footer-col h5{
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.75rem;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:var(--amber);
-    margin-bottom:16px;
-  }
-  .footer-col ul li{margin-bottom:10px;}
-  .footer-col ul li a{font-size:0.9rem;opacity:0.75;transition:opacity .2s ease, color .2s ease;}
-  .footer-col ul li a:hover{opacity:1;color:var(--amber);}
-  .footer-bottom{
-    max-width:1200px;margin:0 auto;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding-top:24px;
-    flex-wrap:wrap;
-    gap:14px;
-    font-size:0.82rem;
-  }
-  .footer-links{display:flex;gap:20px;}
-  .footer-links a{opacity:0.7;}
-  .footer-links a:hover{opacity:1;color:var(--amber);}
-  .socials{display:flex;gap:14px;}
-  .socials a{
-    width:34px;height:34px;
-    border:1px solid var(--line);
-    border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-size:0.85rem;
-    transition:background .2s ease, color .2s ease, border-color .2s ease;
-  }
-  .socials a:hover{background:var(--amber);color:var(--ink);border-color:var(--amber);}
-
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 980px){
-    .feature-grid{grid-template-columns:repeat(2,1fr);}
-    .feature-card:nth-child(2), .feature-card:nth-child(4){margin-top:0;}
-    .service-list{grid-template-columns:repeat(2,1fr);}
-    .hero-inner{grid-template-columns:1fr;}
-    .hero-panel{order:-1;}
-    .footer-inner{grid-template-columns:1fr 1fr;}
-  }
-  @media (max-width: 720px){
-    .burger{display:flex;}
-    nav.primary-nav{
-      position:fixed;
-      top:72px; left:0; right:0;
-      background:var(--ink-2);
-      border-bottom:1px solid var(--line);
-      max-height:0;
-      overflow:hidden;
-      transition:max-height .3s ease;
-    }
-    nav.primary-nav.open{max-height:480px;}
-    nav.primary-nav > ul{
-      flex-direction:column;
-      align-items:flex-start;
-      padding:20px 24px;
-      gap:4px;
-    }
-    nav.primary-nav > ul > li{width:100%;}
-    nav.primary-nav a{display:block;padding:12px 0;width:100%;}
-    .has-dropdown > a::after{float:right;margin-top:4px;}
-    .dropdown{
-      position:static;
-      transform:none;
-      opacity:1;visibility:visible;
-      display:none;
-      width:100%;
-      box-shadow:none;
-      border:none;
-      border-left:2px solid var(--amber);
-      border-radius:0;
-      margin:4px 0 4px 6px;
-    }
-    .has-dropdown.open .dropdown{display:block;}
-    .cta-nav{display:inline-block;margin-top:8px;}
-    .feature-grid{grid-template-columns:1fr;}
-    .service-list{grid-template-columns:1fr;}
-    .footer-inner{grid-template-columns:1fr;}
-    .draft-stamp{display:none;}
-  }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
   <div class="nav-wrap">
-    <a href="#home" class="brand"><span class="mark">M</span>MainCrafts</a>
+    <a href="index.html" class="brand"><span class="mark">M</span>MainCrafts</a>
     <nav class="primary-nav" id="primaryNav">
       <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#features">Features</a></li>
-        <li class="has-dropdown" id="servicesDropdown">
-          <a href="#services" id="servicesToggle">Services</a>
-          <ul class="dropdown">
-            <li><a href="#services"><i class="fa-solid fa-code"></i>Web Development</a></li>
-            <li><a href="#services"><i class="fa-solid fa-palette"></i>UI / UX Design</a></li>
-            <li><a href="#services"><i class="fa-solid fa-bolt"></i>Performance Audits</a></li>
-            <li><a href="#services"><i class="fa-solid fa-cloud-arrow-up"></i>Deployment & Hosting</a></li>
-          </ul>
-        </li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="#contact" class="cta-nav">Apply Now</a></li>
+        <li><a href="index.html" data-page="index.html">Home</a></li>
+        <li><a href="about.html" data-page="about.html">About</a></li>
+        <li><a href="contact.html" data-page="contact.html">Contact</a></li>
+        <li><a href="contact.html" class="cta-nav">Apply Now</a></li>
       </ul>
     </nav>
     <button class="burger" id="burger" aria-label="Toggle menu">
@@ -601,16 +45,16 @@
       </span></h1>
       <p class="hero-sub">We draft, frame, and ship products the way a good workshop builds anything worth keeping — measured, tested, and made to last. From first sketch to production deploy.</p>
       <div class="hero-ctas">
-        <a href="#contact" class="btn-primary">Get Started <i class="fa-solid fa-arrow-right"></i></a>
-        <a href="#features" class="btn-ghost">See what we build ↓</a>
+        <a href="contact.html" class="btn-primary" style="color:#12172B;">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="about.html" class="btn-ghost">Learn more about us →</a>
       </div>
     </div>
     <div class="hero-panel">
-      <div class="sticky-note">still tweaking the<br>hover states lol</div>
-      <div class="draft-stamp">PROJECT<br>SPEC · REV 01</div>
-      <div class="panel-row"><span>Stack</span><span>MERN / Next.js</span></div>
-      <div class="panel-row"><span>Uptime</span><span>99.98%</span></div>
-      <div class="panel-row"><span>Avg. build time</span><span>3.5 weeks</span></div>
+      <div class="sticky-note">page 2 of the<br>internship, let's go</div>
+      <div class="draft-stamp">PROJECT<br>SPEC · REV 02</div>
+      <div class="panel-row"><span>Stack</span><span>HTML / CSS / JS</span></div>
+      <div class="panel-row"><span>Pages</span><span>Home · About · Contact</span></div>
+      <div class="panel-row"><span>Nav</span><span>Fully linked</span></div>
       <div class="panel-row"><span>Responsive</span><span>All breakpoints</span></div>
       <div class="panel-row"><span>Status</span><span>Shipping</span></div>
     </div>
@@ -653,75 +97,32 @@
   </div>
 </section>
 
-<section class="services" id="services">
-  <div class="section-inner">
-    <div class="section-head">
-      <span class="eyebrow">What we offer</span>
-      <h2>Services, framed out</h2>
-      <p>Pick a service or bring the whole build — we work at any stage of the blueprint.</p>
-    </div>
-    <div class="service-list">
-      <div class="service-item">
-        <i class="fa-solid fa-code"></i>
-        <h4>Web Development</h4>
-        <p>Semantic, accessible front ends backed by solid, well-tested APIs.</p>
-      </div>
-      <div class="service-item">
-        <i class="fa-solid fa-palette"></i>
-        <h4>UI / UX Design</h4>
-        <p>Interfaces drafted around how people actually use the product.</p>
-      </div>
-      <div class="service-item">
-        <i class="fa-solid fa-bolt"></i>
-        <h4>Performance Audits</h4>
-        <p>We measure twice — Lighthouse scores, bundle size, real-world load.</p>
-      </div>
-      <div class="service-item">
-        <i class="fa-solid fa-cloud-arrow-up"></i>
-        <h4>Deployment & Hosting</h4>
-        <p>CI/CD pipelines and hosting set up so ship day isn't a fire drill.</p>
-      </div>
-      <div class="service-item">
-        <i class="fa-solid fa-diagram-project"></i>
-        <h4>Product Strategy</h4>
-        <p>From napkin sketch to roadmap — scoped honestly, built deliberately.</p>
-      </div>
-      <div class="service-item">
-        <i class="fa-solid fa-headset"></i>
-        <h4>Ongoing Support</h4>
-        <p>Maintenance and iteration after launch, not just a handoff and goodbye.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="cta-strip" id="contact">
+<section class="cta-strip">
   <h2>Have an idea worth building?</h2>
   <p>Tell us what you're building tomorrow — we'll help you ship it today.</p>
-  <a href="mailto:hr@maincrafts.com" class="btn-dark">Apply Now <i class="fa-solid fa-arrow-right"></i></a>
+  <a href="contact.html" class="btn-dark">Get in Touch <i class="fa-solid fa-arrow-right"></i></a>
 </section>
 
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="#home" class="brand"><span class="mark">M</span>MainCrafts</a>
-      <p>Built this landing page top to bottom for my Full Stack internship task — figured a fake "studio" needed a real personality instead of stock copy.</p>
+      <a href="index.html" class="brand"><span class="mark">M</span>MainCrafts</a>
+      <p>Built this as a 3-page site for my Full Stack internship, Task 2 — Home, About, and a working Contact form.</p>
     </div>
     <div class="footer-col">
       <h5>Navigate</h5>
       <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h5>Services</h5>
       <ul>
-        <li><a href="#services">Web Development</a></li>
-        <li><a href="#services">UI / UX Design</a></li>
-        <li><a href="#services">Deployment</a></li>
+        <li><a href="index.html#features">Web Development</a></li>
+        <li><a href="index.html#features">UI / UX Design</a></li>
+        <li><a href="contact.html">Deployment</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -738,42 +139,15 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2025 MainCrafts — coded by Lakshay for the Full Stack Internship, Task 1.</span>
+    <span>© 2025 MainCrafts — coded by Lakshay for the Full Stack Internship, Task 2.</span>
     <div class="footer-links">
       <a href="#">Privacy Policy</a>
       <a href="#">Terms</a>
-      <a href="#contact">Contact</a>
+      <a href="contact.html">Contact</a>
     </div>
   </div>
 </footer>
 
-<script>
-  console.log("hey — poking around the code? this is my Task 1 build for the MainCrafts internship. nothing fancy, just HTML/CSS/JS.");
-
-  const burger = document.getElementById('burger');
-  const nav = document.getElementById('primaryNav');
-  burger.addEventListener('click', () => nav.classList.toggle('open'));
-
-  // mobile dropdown toggle
-  const servicesToggle = document.getElementById('servicesToggle');
-  const servicesDropdown = document.getElementById('servicesDropdown');
-  servicesToggle.addEventListener('click', (e) => {
-    if(window.innerWidth <= 720){
-      e.preventDefault();
-      servicesDropdown.classList.toggle('open');
-    }
-  });
-
-  // close mobile nav after clicking a link
-  document.querySelectorAll('nav.primary-nav a:not(#servicesToggle)').forEach(a=>{
-    a.addEventListener('click', ()=> {
-      if(window.innerWidth <= 720){
-        nav.classList.remove('open');
-        servicesDropdown.classList.remove('open');
-      }
-    });
-  });
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
